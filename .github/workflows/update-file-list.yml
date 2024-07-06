@@ -12,6 +12,8 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
+      with:
+        fetch-depth: 1  # 仅克隆最新的提交
 
     - name: List all files
       run: |
