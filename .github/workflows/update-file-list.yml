@@ -23,15 +23,18 @@ jobs:
         jq -r '.tree[] | select(.type == "blob") | .path' output/repo_tree.json > file_list.txt
         jq -R -s -c 'split("\n") | map(select(length > 0))' file_list.txt > file_list.json
 
+    - name: Checkout repository
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 1
+
     - name: Commit and push changes
       run: |
         git config --global user.name 'github-actions[bot]'
         git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-        git init
+        git pull origin main
         git add file_list.json
         git commit -m 'Update file list'
-        git remote add origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
-        git branch -M main
-        git push -u origin main
+        git push origin main
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
