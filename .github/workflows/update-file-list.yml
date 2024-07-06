@@ -1,0 +1,31 @@
+name: Update File List
+
+on:
+  schedule:
+    - cron: '0 0 * * 0' # 每周日00:00 UTC运行
+
+jobs:
+  update-file-list:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: List all files
+      run: |
+        find . -type f -not -path './.git/*' > file_list.txt
+
+    - name: Convert file list to JSON
+      run: |
+        jq -R -s -c 'split("\n") | map(select(length > 0))' file_list.txt > file_list.json
+
+    - name: Commit and push changes
+      run: |
+        git config --global user.name 'github-actions[bot]'
+        git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+        git add file_list.json
+        git commit -m 'Update file list'
+        git push
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
