@@ -1,8 +1,9 @@
 name: Update File List
 
 on:
-  schedule:
-    - cron: '0 0 * * 0' # 每周日00:00 UTC运行
+  push:
+    branches:
+      - main  # 选择你要测试的分支
 
 jobs:
   update-file-list:
